@@ -1,0 +1,6 @@
+{
+  "name": "Alla Naga Lokesh Sai Portfolio",
+  "description": "An interactive, high-fidelity AI-powered portfolio website for Alla Naga Lokesh Sai, Software Engineer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
