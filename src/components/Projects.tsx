@@ -154,14 +154,14 @@ export default function Projects() {
               <h2 className="text-xl font-bold sm:text-2xl">{row.title}</h2>
               <ChevronRight className="h-5 w-5 text-white/50" />
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-5 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {row.items.map((project, index) => (
                 <motion.button
                   key={project.title}
                   onClick={() => setActive(project)}
                   whileHover={{ scale: 1.045, y: -6 }}
                   transition={{ duration: .18 }}
-                  className="group relative min-w-[280px] max-w-[390px] flex-1 overflow-hidden rounded-md bg-[#181818] text-left shadow-2xl sm:min-w-[330px]"
+                  className="group relative min-w-[280px] max-w-[390px] flex-1 snap-start overflow-hidden rounded-md bg-[#181818] text-left shadow-2xl sm:min-w-[330px]"
                 >
                   <div className="relative aspect-[16/9] overflow-hidden bg-[radial-gradient(circle_at_70%_25%,rgba(99,102,241,.42),transparent_35%),linear-gradient(135deg,#111827,#090909)]">
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
