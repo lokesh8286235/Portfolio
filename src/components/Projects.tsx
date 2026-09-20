@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowUpRight, Github, Search, X, Layers3, Gauge, Code2 } from "lucide-react";
+import { ArrowRight, Github, Play, Search, X, ExternalLink, ChevronRight } from "lucide-react";
 
 type Project = {
   title: string;
   category: string;
-  tagline: string;
+  eyebrow: string;
   description: string;
-  metric?: string;
+  metric: string;
   tech: string[];
   architecture: string[];
   impact: string[];
@@ -17,172 +17,195 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
-    title: "AETHER — Incident Intelligence Platform",
-    category: "AI / Engineering Intelligence",
-    tagline: "Evidence-driven incident investigation and AI-assisted root-cause analysis.",
-    description: "Designed an incident intelligence workflow that turns production signals and historical cases into structured investigation context and ranked incident hypotheses.",
-    metric: "94.2% Top-1 accuracy · 95.4% precision · 91.8% recall",
-    tech: ["Python", "LLMs", "RAG", "Evaluation", "Observability", "FastAPI"],
-    architecture: ["Incident intake", "Signal normalization", "Evidence retrieval", "Reasoning workflow", "Structured RCA output", "Evaluation loop"],
-    impact: ["Evaluated across 840 real production cases.", "Focused outputs on evidence and reproducible investigation steps.", "Included false-positive and recall tracking for model evaluation."],
+    title: "AETHER",
+    category: "AI & Intelligence",
+    eyebrow: "INCIDENT INTELLIGENCE PLATFORM",
+    description: "An evidence-driven incident investigation platform that turns production signals and historical cases into structured context, ranked hypotheses, and reproducible root-cause workflows.",
+    metric: "94.2% Top-1 · 95.4% precision · 91.8% recall",
+    tech: ["Python", "LLMs", "RAG", "FastAPI", "Evaluation", "Observability"],
+    architecture: ["Incident intake", "Signal normalization", "Evidence retrieval", "Reasoning workflow", "Structured RCA", "Evaluation loop"],
+    impact: ["Evaluated across 840 real production cases.", "Designed outputs around evidence and reproducible investigation steps.", "Tracked precision, recall, and false-positive behavior."],
     github: "https://github.com/lokesh8286235/incident-intelligence-platform"
   },
   {
-    title: "Enterprise RAG Automation Platform",
-    category: "AI / RAG",
-    tagline: "Production retrieval, grounded generation, evaluation, and observability.",
-    description: "Built an end-to-end knowledge retrieval platform that ingests large document collections, creates vector representations, retrieves relevant context, and generates grounded answers through an LLM workflow.",
+    title: "Enterprise RAG",
+    category: "AI & Intelligence",
+    eyebrow: "RETRIEVAL AUTOMATION PLATFORM",
+    description: "Production retrieval and grounded-generation infrastructure for large document collections, with evaluation and observability built into the workflow.",
     metric: "10K+ docs · 1,000+ queries/day · 91% accuracy",
-    tech: ["Python", "LangChain", "Claude API", "PostgreSQL", "pgvector", "AWS", "Kubernetes"],
-    architecture: ["Document ingestion", "Chunking + embeddings", "pgvector retrieval", "Top-k context selection", "Claude generation", "Prometheus monitoring"],
-    impact: ["Improved answer accuracy from 78% to 91%.", "Reduced manual lookup time by 40%.", "Maintained 99.9% uptime in production."],
+    tech: ["Python", "LangChain", "Claude API", "pgvector", "PostgreSQL", "AWS", "Kubernetes"],
+    architecture: ["Document ingestion", "Chunking + embeddings", "Vector retrieval", "Context selection", "LLM generation", "Prometheus"],
+    impact: ["Improved answer accuracy from 78% to 91%.", "Reduced manual lookup time by 40%.", "Maintained 99.9% production uptime."],
     github: "https://github.com/lokesh8286235/enterprise-rag-automation-platform"
   },
   {
-    title: "Graph Compilation & Inference Optimization",
-    category: "ML Systems",
-    tagline: "Graph transformation and runtime optimization for faster model inference.",
-    description: "Built a compilation pipeline that lowered PyTorch and ONNX models into optimized runtime representations using graph transformations, operator fusion, quantization, and profiling.",
-    metric: "~40% higher throughput · ~35% lower latency",
+    title: "Graph Compiler",
+    category: "ML Infrastructure",
+    eyebrow: "INFERENCE OPTIMIZATION",
+    description: "A model compilation pipeline that lowers PyTorch and ONNX graphs into optimized runtime representations using graph transforms, fusion, quantization, and GPU profiling.",
+    metric: "~40% throughput gain · ~35% lower latency",
     tech: ["Python", "PyTorch", "ONNX", "MLIR", "CUDA", "NVIDIA Nsight"],
-    architecture: ["Model import", "Graph analysis", "Operator fusion", "Quantization", "Runtime lowering", "GPU profiling + benchmarking"],
-    impact: ["Raised throughput from roughly 800 to 1,120 inferences/sec in the benchmark described.", "Reduced p99 latency from about 120ms to 78ms.", "Validated performance under sustained production-style traffic."]
+    architecture: ["Model import", "Graph analysis", "Operator fusion", "Quantization", "Runtime lowering", "GPU profiling"],
+    impact: ["Raised throughput from roughly 800 to 1,120 inferences/sec.", "Reduced p99 latency from about 120ms to 78ms.", "Benchmarked under sustained production-style traffic."]
   },
   {
-    title: "India Food Delivery Price Comparator",
-    category: "AI / Full-Stack",
-    tagline: "Natural-language food ordering that compares delivery options before checkout.",
-    description: "Built IFD to translate a user's food request into structured constraints, compare available delivery options, surface coupons and fees, and route the user toward the selected platform/cart.",
-    metric: "Voice + constraints + cross-platform comparison",
+    title: "IFD",
+    category: "Products & Full-Stack",
+    eyebrow: "INDIA FOOD DELIVERY COMPARISON",
+    description: "A natural-language food ordering experience that translates requests into constraints, compares delivery options, surfaces offers and fees, and hands the user off to the selected platform.",
+    metric: "Voice + AI constraints + cross-platform comparison",
     tech: ["Next.js", "React", "TypeScript", "AI", "MCP", "Vercel"],
-    architecture: ["Natural-language request", "Constraint extraction", "Restaurant/item matching", "Price + fee comparison", "Offer optimization", "Platform/cart handoff"],
-    impact: ["Designed around budget, delivery-time, party-size, and add-on constraints.", "Surfaces a small set of high-value options instead of forcing users to compare platforms manually.", "Built for an extensible MCP/agent workflow."],
+    architecture: ["Natural-language request", "Constraint extraction", "Item matching", "Price comparison", "Offer optimization", "Cart handoff"],
+    impact: ["Supports budget, delivery-time, party-size, and add-on constraints.", "Reduces manual comparison across delivery platforms.", "Designed for extensible agent/MCP workflows."],
     github: "https://github.com/lokesh8286235/IFD",
     demo: "https://ifd-mu.vercel.app/"
   },
   {
-    title: "High-Throughput Event Processing System",
+    title: "Event Processing",
     category: "Distributed Systems",
-    tagline: "Asynchronous event processing with retries, recovery, and observability.",
-    description: "Engineered a distributed processing system focused on concurrency, queue-driven execution, failure recovery, and operational visibility.",
+    eyebrow: "HIGH-THROUGHPUT SYSTEM",
+    description: "An asynchronous event-processing system focused on concurrency, queue-driven execution, failure recovery, retries, and operational visibility.",
     metric: "Concurrency · retries · recovery · observability",
     tech: ["C++", "Concurrency", "Queues", "Distributed Systems", "Linux"],
-    architecture: ["Event intake", "Queueing", "Worker scheduling", "Retry policy", "Failure recovery", "Metrics + tracing"],
-    impact: ["Designed explicit failure paths instead of relying on happy-path processing.", "Separated ingestion from execution to support backpressure.", "Focused the implementation on predictable latency and recoverability."],
+    architecture: ["Event intake", "Queueing", "Worker scheduling", "Retry policy", "Failure recovery", "Metrics"],
+    impact: ["Separated ingestion from execution to support backpressure.", "Designed explicit recovery paths for failed work.", "Focused on predictable processing behavior."]
+    ,
     github: "https://github.com/lokesh8286235/High-Throughput-Event-Processing-System"
   },
   {
-    title: "Distributed Data Pipeline",
-    category: "Systems / Data",
-    tagline: "Scalable data movement with concurrency and performance-focused processing.",
-    description: "Built a distributed data pipeline emphasizing parallel execution, scheduling, throughput, and reliable processing across pipeline stages.",
+    title: "Distributed Pipeline",
+    category: "Distributed Systems",
+    eyebrow: "PARALLEL DATA PROCESSING",
+    description: "A performance-focused data pipeline emphasizing parallel execution, scheduling, throughput, and reliable processing across pipeline stages.",
     metric: "Parallel processing · scheduling · throughput",
     tech: ["C++", "Concurrency", "Data Pipelines", "Algorithms", "Linux"],
-    architecture: ["Input partitioning", "Task scheduling", "Parallel workers", "Aggregation", "Failure handling", "Performance measurement"],
-    impact: ["Applied concurrency primitives to increase pipeline parallelism.", "Separated scheduling from processing for clearer system boundaries.", "Measured bottlenecks to guide performance work."],
+    architecture: ["Input partitioning", "Task scheduling", "Parallel workers", "Aggregation", "Failure handling", "Benchmarking"],
+    impact: ["Applied concurrency primitives for pipeline parallelism.", "Separated scheduling from processing.", "Used bottleneck measurement to guide optimization."],
     github: "https://github.com/lokesh8286235/Distributed-Data-Pipeline"
   }
 ];
 
-const categories = ["All", "AI / RAG", "AI / Engineering Intelligence", "ML Systems", "AI / Full-Stack", "Distributed Systems", "Systems / Data"];
+const rows = [
+  { title: "AI & Intelligence", items: PROJECTS.filter(p => p.category === "AI & Intelligence") },
+  { title: "ML Infrastructure", items: PROJECTS.filter(p => p.category === "ML Infrastructure") },
+  { title: "Products & Full-Stack", items: PROJECTS.filter(p => p.category === "Products & Full-Stack") },
+  { title: "Distributed Systems", items: PROJECTS.filter(p => p.category === "Distributed Systems") }
+];
 
 export default function Projects() {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("All");
   const [active, setActive] = useState<Project | null>(null);
+  const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
 
-  const filtered = useMemo(() => PROJECTS.filter((p) => {
-    const matchesCategory = category === "All" || p.category === category;
-    const haystack = [p.title, p.tagline, p.description, p.category, ...p.tech].join(" ").toLowerCase();
-    return matchesCategory && haystack.includes(query.toLowerCase());
-  }), [query, category]);
+  const filteredRows = useMemo(() => rows.map(row => ({
+    ...row,
+    items: row.items.filter(p => {
+      const haystack = [p.title, p.category, p.eyebrow, p.description, ...p.tech].join(" ").toLowerCase();
+      return haystack.includes(query.toLowerCase());
+    })
+  })).filter(row => row.items.length), [query]);
+
+  const featured = PROJECTS[0];
 
   return (
-    <main className="min-h-screen bg-[#07090d] text-white selection:bg-indigo-500/30">
-      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_-10%,rgba(99,102,241,.18),transparent_45%)]" />
-      <div className="relative mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
-        <header className="flex items-center justify-between border-b border-white/10 pb-6">
-          <div className="font-mono text-xs tracking-[.25em] text-white/50 uppercase">Lokesh / Projects</div>
-          <a href="https://github.com/lokesh8286235" target="_blank" rel="noreferrer" className="text-white/50 hover:text-white transition-colors">
-            <Github className="h-5 w-5" />
-          </a>
-        </header>
+    <main className="min-h-screen bg-[#080808] text-white selection:bg-red-600/40">
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_0%,rgba(229,9,20,.18),transparent_35%)]" />
 
-        <section className="py-20 sm:py-28">
-          <p className="font-mono text-xs uppercase tracking-[.3em] text-indigo-400">Selected Engineering Work</p>
-          <h1 className="mt-4 max-w-4xl text-5xl font-semibold tracking-[-.04em] sm:text-7xl">
-            Projects that show how I build.
-          </h1>
-          <p className="mt-6 max-w-2xl text-base leading-7 text-white/55 sm:text-lg">
-            AI systems, ML infrastructure, distributed systems, and full-stack products — presented through the problem, architecture, and measurable result.
-          </p>
-        </section>
+      <nav className="fixed top-0 z-40 w-full bg-gradient-to-b from-black/95 via-black/70 to-transparent px-5 py-5 sm:px-8 lg:px-12">
+        <div className="mx-auto flex max-w-[1500px] items-center justify-between">
+          <div className="text-2xl font-black tracking-[-.08em] text-[#e50914]">LOKESH</div>
+          <div className="flex items-center gap-5 text-xs font-medium text-white/70">
+            <span className="hidden sm:block text-white">Projects</span>
+            <button onClick={() => setSearchOpen(v => !v)} aria-label="Search projects"><Search className="h-5 w-5" /></button>
+            <a href="https://github.com/lokesh8286235" target="_blank" rel="noreferrer" aria-label="GitHub"><Github className="h-5 w-5" /></a>
+          </div>
+        </div>
+      </nav>
 
-        <section className="sticky top-0 z-20 -mx-5 border-y border-white/10 bg-[#07090d]/90 px-5 py-4 backdrop-blur-xl sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {categories.map((item) => (
-                <button key={item} onClick={() => setCategory(item)} className={`whitespace-nowrap rounded-full border px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-all ${category === item ? "border-indigo-400 bg-indigo-500/15 text-indigo-300" : "border-white/10 text-white/45 hover:border-white/20 hover:text-white/80"}`}>
-                  {item}
-                </button>
-              ))}
-            </div>
-            <div className="relative shrink-0 lg:w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search projects..." className="w-full rounded-full border border-white/10 bg-white/[.03] py-2.5 pl-10 pr-4 text-sm outline-none placeholder:text-white/25 focus:border-indigo-400/60" />
+      <section className="relative min-h-[82vh] overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_45%,rgba(99,102,241,.22),transparent_32%),linear-gradient(90deg,#080808_15%,rgba(8,8,8,.62)_52%,rgba(8,8,8,.15)),linear-gradient(0deg,#080808_2%,transparent_55%)]" />
+        <div className="relative mx-auto flex min-h-[82vh] max-w-[1500px] items-end px-5 pb-20 sm:px-8 lg:px-12">
+          <div className="max-w-3xl">
+            <p className="mb-4 font-mono text-[11px] font-semibold tracking-[.28em] text-white/55">FEATURED PROJECT · 01</p>
+            <h1 className="text-6xl font-black tracking-[-.055em] sm:text-8xl lg:text-[9rem]">{featured.title}</h1>
+            <p className="mt-3 text-xs font-bold tracking-[.25em] text-white/70">{featured.eyebrow}</p>
+            <p className="mt-6 max-w-2xl text-base leading-7 text-white/65 sm:text-lg">{featured.description}</p>
+            <p className="mt-5 font-mono text-xs text-white/85">{featured.metric}</p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <button onClick={() => setActive(featured)} className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-bold text-black hover:bg-white/85"><Play className="h-4 w-4 fill-current" /> Explore Project</button>
+              <a href={featured.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-white/15 px-6 py-3 text-sm font-bold backdrop-blur hover:bg-white/25"><Github className="h-4 w-4" /> Source Code</a>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="grid gap-5 py-10 md:grid-cols-2">
-          {filtered.map((project, index) => (
-            <motion.article key={project.title} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * .04 }} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[.025] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-400/30 hover:bg-white/[.045]">
-              <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-indigo-500/10 blur-3xl transition-all group-hover:bg-indigo-500/20" />
-              <div className="relative">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="font-mono text-[10px] uppercase tracking-[.18em] text-indigo-400">{project.category}</span>
-                  <Code2 className="h-4 w-4 text-white/20" />
-                </div>
-                <h2 className="mt-5 text-2xl font-semibold tracking-tight">{project.title}</h2>
-                <p className="mt-2 text-sm font-medium text-white/65">{project.tagline}</p>
-                <p className="mt-4 min-h-20 text-sm leading-6 text-white/45">{project.description}</p>
-                {project.metric && <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/5 px-3 py-1.5 font-mono text-[10px] text-emerald-300"><Gauge className="h-3.5 w-3.5" />{project.metric}</div>}
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {project.tech.map((tech) => <span key={tech} className="rounded-md border border-white/10 bg-white/[.025] px-2.5 py-1 font-mono text-[10px] text-white/45">{tech}</span>)}
-                </div>
-                <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-5">
-                  <button onClick={() => setActive(project)} className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white">View case study <ArrowUpRight className="h-4 w-4" /></button>
-                  <div className="flex gap-3">
-                    {project.github && <a href={project.github} target="_blank" rel="noreferrer" aria-label="GitHub" className="text-white/30 hover:text-white"><Github className="h-4 w-4" /></a>}
-                    {project.demo && <a href={project.demo} target="_blank" rel="noreferrer" className="font-mono text-[10px] uppercase text-indigo-400 hover:text-indigo-300">Live</a>}
+      <section className="relative mx-auto max-w-[1500px] px-5 pb-16 sm:px-8 lg:px-12">
+        {searchOpen && (
+          <div className="mb-10 flex items-center gap-3 border-b border-white/15 pb-3">
+            <Search className="h-5 w-5 text-white/50" />
+            <input autoFocus value={query} onChange={e => setQuery(e.target.value)} placeholder="Search AI, C++, RAG, Next.js..." className="w-full bg-transparent text-lg outline-none placeholder:text-white/25" />
+            {query && <button onClick={() => setQuery("")}>Clear</button>}
+          </div>
+        )}
+
+        {filteredRows.map(row => (
+          <div key={row.title} className="mb-12">
+            <div className="mb-3 flex items-center gap-2">
+              <h2 className="text-xl font-bold sm:text-2xl">{row.title}</h2>
+              <ChevronRight className="h-5 w-5 text-white/50" />
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {row.items.map((project, index) => (
+                <motion.button
+                  key={project.title}
+                  onClick={() => setActive(project)}
+                  whileHover={{ scale: 1.045, y: -6 }}
+                  transition={{ duration: .18 }}
+                  className="group relative min-w-[280px] max-w-[390px] flex-1 overflow-hidden rounded-md bg-[#181818] text-left shadow-2xl sm:min-w-[330px]"
+                >
+                  <div className="relative aspect-[16/9] overflow-hidden bg-[radial-gradient(circle_at_70%_25%,rgba(99,102,241,.42),transparent_35%),linear-gradient(135deg,#111827,#090909)]">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
+                    <div className="absolute left-5 top-5 font-mono text-[9px] tracking-[.22em] text-white/40">PROJECT {String(index + 1).padStart(2,"0")}</div>
+                    <div className="absolute bottom-4 left-5 right-5">
+                      <p className="text-[9px] font-bold tracking-[.18em] text-red-400">{project.eyebrow}</p>
+                      <h3 className="mt-1 text-2xl font-black tracking-tight">{project.title}</h3>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </motion.article>
-          ))}
-        </section>
+                  <div className="p-5">
+                    <p className="text-xs leading-5 text-white/55 line-clamp-2">{project.description}</p>
+                    <p className="mt-4 font-mono text-[9px] text-emerald-300">{project.metric}</p>
+                    <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-white/70">View details <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" /></div>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
 
-        {filtered.length === 0 && <div className="py-24 text-center font-mono text-xs text-white/35">No projects match your search.</div>}
-
-        <footer className="border-t border-white/10 py-10 font-mono text-[10px] uppercase tracking-[.2em] text-white/25">Projects only · Naga Lokesh Sai Alla</footer>
-      </div>
+      <footer className="border-t border-white/10 px-5 py-10 text-center font-mono text-[9px] uppercase tracking-[.25em] text-white/25">
+        LOKESH · ENGINEERING PROJECTS · AI · ML SYSTEMS · DISTRIBUTED SYSTEMS
+      </footer>
 
       <AnimatePresence>
         {active && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md" onClick={() => setActive(null)}>
-            <motion.div initial={{ opacity: 0, y: 20, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: .98 }} onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/10 bg-[#0c1018] p-7 shadow-2xl sm:p-9">
-              <div className="flex items-start justify-between gap-5">
-                <div><p className="font-mono text-[10px] uppercase tracking-[.2em] text-indigo-400">{active.category}</p><h2 className="mt-3 text-3xl font-semibold tracking-tight">{active.title}</h2></div>
-                <button onClick={() => setActive(null)} className="rounded-full border border-white/10 p-2 text-white/40 hover:text-white"><X className="h-4 w-4" /></button>
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 z-50 overflow-y-auto bg-black/80 p-4 backdrop-blur-md sm:p-10" onClick={() => setActive(null)}>
+            <motion.div initial={{opacity:0,y:25}} animate={{opacity:1,y:0}} exit={{opacity:0,y:25}} onClick={e=>e.stopPropagation()} className="mx-auto mt-10 max-w-4xl overflow-hidden rounded-lg border border-white/10 bg-[#181818] shadow-2xl">
+              <div className="relative min-h-[300px] bg-[radial-gradient(circle_at_75%_25%,rgba(99,102,241,.35),transparent_35%),linear-gradient(135deg,#111827,#080808)] p-7 sm:p-10">
+                <button onClick={() => setActive(null)} className="absolute right-5 top-5 rounded-full bg-black/70 p-2 text-white/70 hover:text-white"><X className="h-5 w-5" /></button>
+                <p className="font-mono text-[10px] tracking-[.2em] text-red-400">{active.eyebrow}</p>
+                <h2 className="mt-3 text-5xl font-black tracking-[-.04em] sm:text-7xl">{active.title}</h2>
+                <p className="mt-5 max-w-2xl text-sm leading-7 text-white/65">{active.description}</p>
+                <p className="mt-5 font-mono text-xs text-emerald-300">{active.metric}</p>
               </div>
-              <p className="mt-5 text-sm leading-7 text-white/60">{active.description}</p>
-              {active.metric && <p className="mt-5 font-mono text-xs text-emerald-300">{active.metric}</p>}
-              <div className="mt-8 grid gap-8 sm:grid-cols-2">
-                <div><div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-white/35"><Layers3 className="h-4 w-4" /> Architecture</div><div className="mt-4 space-y-2">{active.architecture.map((step, i) => <div key={step} className="rounded-xl border border-white/10 bg-white/[.025] p-3 text-sm text-white/60"><span className="mr-3 font-mono text-indigo-400">0{i + 1}</span>{step}</div>)}</div></div>
-                <div><div className="font-mono text-[10px] uppercase tracking-widest text-white/35">Impact</div><div className="mt-4 space-y-3">{active.impact.map((item) => <div key={item} className="text-sm leading-6 text-white/60">• {item}</div>)}</div></div>
+              <div className="grid gap-10 p-7 sm:grid-cols-2 sm:p-10">
+                <div><h3 className="text-sm font-bold uppercase tracking-widest text-white/40">Architecture</h3><div className="mt-4 space-y-2">{active.architecture.map((s,i)=><div key={s} className="rounded border border-white/10 bg-white/[.025] p-3 text-sm text-white/65"><span className="mr-3 font-mono text-red-500">0{i+1}</span>{s}</div>)}</div></div>
+                <div><h3 className="text-sm font-bold uppercase tracking-widest text-white/40">Impact</h3><div className="mt-4 space-y-3">{active.impact.map(x=><p key={x} className="text-sm leading-6 text-white/65">• {x}</p>)}</div><div className="mt-7 flex flex-wrap gap-2">{active.tech.map(t=><span key={t} className="rounded border border-white/10 px-2 py-1 font-mono text-[9px] text-white/45">{t}</span>)}</div></div>
               </div>
-              <div className="mt-8 flex flex-wrap gap-2">{active.tech.map((tech) => <span key={tech} className="rounded-md border border-white/10 px-2.5 py-1 font-mono text-[10px] text-white/45">{tech}</span>)}</div>
-              <div className="mt-8 flex gap-3">{active.github && <a href={active.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-black"><Github className="h-4 w-4" /> Source</a>}{active.demo && <a href={active.demo} target="_blank" rel="noreferrer" className="rounded-full border border-white/15 px-4 py-2 text-sm text-white/70">Live demo</a>}</div>
+              <div className="flex gap-3 border-t border-white/10 p-7 sm:p-10">
+                {active.github && <a href={active.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-sm font-bold text-black"><Github className="h-4 w-4" /> Source Code</a>}
+                {active.demo && <a href={active.demo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-red-600 px-5 py-3 text-sm font-bold"><ExternalLink className="h-4 w-4" /> Live Demo</a>}
+              </div>
             </motion.div>
           </motion.div>
         )}
