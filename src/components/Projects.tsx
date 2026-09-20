@@ -1,375 +1,192 @@
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { PROJECTS } from "../data";
-import { Project } from "../types";
-import { 
-  Search, ArrowUpRight, Github, X, CheckSquare, Sparkles, 
-  TrendingUp, Layers, SlidersHorizontal 
-} from "lucide-react";
+import { ArrowUpRight, Github, Search, X, Layers3, Gauge, Code2 } from "lucide-react";
+
+type Project = {
+  title: string;
+  category: string;
+  tagline: string;
+  description: string;
+  metric?: string;
+  tech: string[];
+  architecture: string[];
+  impact: string[];
+  github?: string;
+  demo?: string;
+};
+
+const PROJECTS: Project[] = [
+  {
+    title: "Enterprise RAG Automation Platform",
+    category: "AI / RAG",
+    tagline: "Production retrieval, grounded generation, evaluation, and observability.",
+    description: "Built an end-to-end knowledge retrieval platform that ingests large document collections, creates vector representations, retrieves relevant context, and generates grounded answers through an LLM workflow.",
+    metric: "10K+ docs · 1,000+ queries/day · 91% accuracy",
+    tech: ["Python", "LangChain", "Claude API", "PostgreSQL", "pgvector", "AWS", "Kubernetes"],
+    architecture: ["Document ingestion", "Chunking + embeddings", "pgvector retrieval", "Top-k context selection", "Claude generation", "Prometheus monitoring"],
+    impact: ["Improved answer accuracy from 78% to 91%.", "Reduced manual lookup time by 40%.", "Maintained 99.9% uptime in production."],
+    github: "https://github.com/lokesh8286235/enterprise-rag-automation-platform"
+  },
+  {
+    title: "AETHER — Incident Intelligence Platform",
+    category: "AI / Engineering Intelligence",
+    tagline: "Evidence-driven incident investigation and AI-assisted root-cause analysis.",
+    description: "Designed an incident intelligence workflow that turns production signals and historical cases into structured investigation context and ranked incident hypotheses.",
+    metric: "94.2% Top-1 accuracy · 95.4% precision · 91.8% recall",
+    tech: ["Python", "LLMs", "RAG", "Evaluation", "Observability", "FastAPI"],
+    architecture: ["Incident intake", "Signal normalization", "Evidence retrieval", "Reasoning workflow", "Structured RCA output", "Evaluation loop"],
+    impact: ["Evaluated across 840 real production cases.", "Focused outputs on evidence and reproducible investigation steps.", "Included false-positive and recall tracking for model evaluation."],
+    github: "https://github.com/lokesh8286235/incident-intelligence-platform"
+  },
+  {
+    title: "Graph Compilation & Inference Optimization",
+    category: "ML Systems",
+    tagline: "Graph transformation and runtime optimization for faster model inference.",
+    description: "Built a compilation pipeline that lowered PyTorch and ONNX models into optimized runtime representations using graph transformations, operator fusion, quantization, and profiling.",
+    metric: "~40% higher throughput · ~35% lower latency",
+    tech: ["Python", "PyTorch", "ONNX", "MLIR", "CUDA", "NVIDIA Nsight"],
+    architecture: ["Model import", "Graph analysis", "Operator fusion", "Quantization", "Runtime lowering", "GPU profiling + benchmarking"],
+    impact: ["Raised throughput from roughly 800 to 1,120 inferences/sec in the benchmark described.", "Reduced p99 latency from about 120ms to 78ms.", "Validated performance under sustained production-style traffic."]
+  },
+  {
+    title: "India Food Delivery Price Comparator",
+    category: "AI / Full-Stack",
+    tagline: "Natural-language food ordering that compares delivery options before checkout.",
+    description: "Built IFD to translate a user's food request into structured constraints, compare available delivery options, surface coupons and fees, and route the user toward the selected platform/cart.",
+    metric: "Voice + constraints + cross-platform comparison",
+    tech: ["Next.js", "React", "TypeScript", "AI", "MCP", "Vercel"],
+    architecture: ["Natural-language request", "Constraint extraction", "Restaurant/item matching", "Price + fee comparison", "Offer optimization", "Platform/cart handoff"],
+    impact: ["Designed around budget, delivery-time, party-size, and add-on constraints.", "Surfaces a small set of high-value options instead of forcing users to compare platforms manually.", "Built for an extensible MCP/agent workflow."],
+    github: "https://github.com/lokesh8286235/IFD",
+    demo: "https://ifd-mu.vercel.app/"
+  },
+  {
+    title: "High-Throughput Event Processing System",
+    category: "Distributed Systems",
+    tagline: "Asynchronous event processing with retries, recovery, and observability.",
+    description: "Engineered a distributed processing system focused on concurrency, queue-driven execution, failure recovery, and operational visibility.",
+    metric: "Concurrency · retries · recovery · observability",
+    tech: ["C++", "Concurrency", "Queues", "Distributed Systems", "Linux"],
+    architecture: ["Event intake", "Queueing", "Worker scheduling", "Retry policy", "Failure recovery", "Metrics + tracing"],
+    impact: ["Designed explicit failure paths instead of relying on happy-path processing.", "Separated ingestion from execution to support backpressure.", "Focused the implementation on predictable latency and recoverability."],
+    github: "https://github.com/lokesh8286235/High-Throughput-Event-Processing-System"
+  },
+  {
+    title: "Distributed Data Pipeline",
+    category: "Systems / Data",
+    tagline: "Scalable data movement with concurrency and performance-focused processing.",
+    description: "Built a distributed data pipeline emphasizing parallel execution, scheduling, throughput, and reliable processing across pipeline stages.",
+    metric: "Parallel processing · scheduling · throughput",
+    tech: ["C++", "Concurrency", "Data Pipelines", "Algorithms", "Linux"],
+    architecture: ["Input partitioning", "Task scheduling", "Parallel workers", "Aggregation", "Failure handling", "Performance measurement"],
+    impact: ["Applied concurrency primitives to increase pipeline parallelism.", "Separated scheduling from processing for clearer system boundaries.", "Measured bottlenecks to guide performance work."],
+    github: "https://github.com/lokesh8286235/Distributed-Data-Pipeline"
+  }
+];
+
+const categories = ["All", "AI / RAG", "AI / Engineering Intelligence", "ML Systems", "AI / Full-Stack", "Distributed Systems", "Systems / Data"];
 
 export default function Projects() {
-  const [selectedCategory, setSelectedCategory] = useState<"all" | "ai" | "devops" | "fullstack" | "crm">("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCaseStudyId, setActiveCaseStudyId] = useState<number | null>(null);
-  const [sortBy, setSortBy] = useState<"default" | "impact" | "complexity">("default");
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All");
+  const [active, setActive] = useState<Project | null>(null);
 
-  const categories = [
-    { key: "all", label: "All Work" },
-    { key: "ai", label: "AI & RAG" },
-    { key: "devops", label: "DevOps & Cloud" },
-    { key: "fullstack", label: "Full-Stack Web" },
-    { key: "crm", label: "Salesforce & CRM" }
-  ];
-
-  const getCategorizedKey = (cat: string) => {
-    const l = cat.toLowerCase();
-    if (l.includes("ai") || l.includes("rag")) return "ai";
-    if (l.includes("devops") || l.includes("cloud")) return "devops";
-    if (l.includes("full")) return "fullstack";
-    return "crm";
-  };
-
-  const filteredProjects = PROJECTS.filter((p) => {
-    const catCode = getCategorizedKey(p.category);
-    const matchesCategory = selectedCategory === "all" || catCode === selectedCategory;
-    const matchesSearch = 
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.tech.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    return matchesCategory && matchesSearch;
-  });
-
-  // Apply sorting options based on user selected criteria
-  const sortedProjects = [...filteredProjects].sort((a, b) => {
-    if (sortBy === "impact") {
-      // Sort by numeric percentage value inside the metric (91% / 35% / etc.)
-      const aVal = parseInt(a.metric?.replace(/\D/g, "") || "0");
-      const bVal = parseInt(b.metric?.replace(/\D/g, "") || "0");
-      return bVal - aVal;
-    }
-    if (sortBy === "complexity") {
-      // Sort by quantity of tech stack tools utilized (larger stack = high complexity)
-      return b.tech.length - a.tech.length;
-    }
-    return 0; // Default JSON array order
-  });
-
-  const activeProject = activeCaseStudyId !== null ? PROJECTS[activeCaseStudyId] : null;
+  const filtered = useMemo(() => PROJECTS.filter((p) => {
+    const matchesCategory = category === "All" || p.category === category;
+    const haystack = [p.title, p.tagline, p.description, p.category, ...p.tech].join(" ").toLowerCase();
+    return matchesCategory && haystack.includes(query.toLowerCase());
+  }), [query, category]);
 
   return (
-    <section id="projects" className="py-32 px-6 max-w-7xl mx-auto border-t border-slate-200 select-none">
-      
-      {/* Header Info */}
-      <div className="mb-14 text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <span className="font-mono text-[9px] tracking-[0.25em] text-indigo-600 uppercase block mb-1 font-bold">
-            SHIPMENTS & PORTFOLIO
-          </span>
-          <h2 className="font-sans text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Production-grade shipments
-          </h2>
-          <p className="text-slate-600 text-xs sm:text-sm max-w-xl mt-3 leading-relaxed">
-            Engineered software systems designed for high availability, security, and proven enterprise business delivery. Explore cases explaining the problems and architectural pipelines.
+    <main className="min-h-screen bg-[#07090d] text-white selection:bg-indigo-500/30">
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_-10%,rgba(99,102,241,.18),transparent_45%)]" />
+      <div className="relative mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+        <header className="flex items-center justify-between border-b border-white/10 pb-6">
+          <div className="font-mono text-xs tracking-[.25em] text-white/50 uppercase">Lokesh / Projects</div>
+          <a href="https://github.com/lokesh8286235" target="_blank" rel="noreferrer" className="text-white/50 hover:text-white transition-colors">
+            <Github className="h-5 w-5" />
+          </a>
+        </header>
+
+        <section className="py-20 sm:py-28">
+          <p className="font-mono text-xs uppercase tracking-[.3em] text-indigo-400">Selected Engineering Work</p>
+          <h1 className="mt-4 max-w-4xl text-5xl font-semibold tracking-[-.04em] sm:text-7xl">
+            Projects that show how I build.
+          </h1>
+          <p className="mt-6 max-w-2xl text-base leading-7 text-white/55 sm:text-lg">
+            AI systems, ML infrastructure, distributed systems, and full-stack products — presented through the problem, architecture, and measurable result.
           </p>
-        </div>
- 
-        {/* Search tool block */}
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search title, tech stack..."
-            className="w-full bg-white border border-slate-200 hover:border-slate-350 focus:border-indigo-500 rounded-lg py-2.5 pl-9 pr-4 text-xs text-slate-800 outline-none transition-all placeholder:text-slate-400 animate-fade-in"
-          />
-        </div>
-      </div>
+        </section>
 
-      {/* Categories filter and Sorting pill list (Linear-inspired controls) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/80 pb-6 mb-10 gap-4">
-        
-        {/* Category triggers */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          {categories.map((c) => (
-            <button
-              key={c.key}
-              onClick={() => setSelectedCategory(c.key as any)}
-              className={`px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                selectedCategory === c.key
-                  ? "bg-indigo-600 text-white font-bold shadow-sm"
-                  : "bg-transparent text-slate-500 hover:text-slate-800 border border-transparent"
-              }`}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Sorting selection box */}
-        <div className="flex items-center gap-2 font-mono text-[10px] text-slate-500 self-start sm:self-auto bg-slate-50 p-1 border border-slate-200 rounded-lg">
-          <div className="flex items-center gap-1 px-2 text-slate-400">
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Sort:</span>
-          </div>
-          {(["default", "impact", "complexity"] as const).map(opt => (
-            <button
-              key={opt}
-              onClick={() => setSortBy(opt)}
-              className={`px-2.5 py-1 rounded-md uppercase font-bold text-[9px] cursor-pointer transition-all ${
-                sortBy === opt
-                  ? "bg-white text-slate-850 border border-slate-200 shadow-sm"
-                  : "text-slate-505 hover:text-slate-900"
-              }`}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-
-      </div>
-
-      {/* Grid of cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {sortedProjects.length === 0 ? (
-          <div className="col-span-2 text-center py-20 bg-slate-50 border border-slate-200 rounded-2xl select-none">
-            <span className="font-mono text-xs text-slate-500 italic block">No active projects matching the query criteria...</span>
-          </div>
-        ) : (
-          sortedProjects.map((p, idx) => (
-            <motion.div
-              layout
-              key={p.title}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: idx * 0.05 }}
-              className="p-8 rounded-3xl bg-white border border-slate-200/95 hover:border-indigo-300/80 hover:shadow-2xl transition-all duration-500 text-left flex flex-col justify-between group min-h-[350px] shadow-xs relative overflow-hidden bg-gradient-to-tr from-white to-slate-50/40"
-            >
-              <div>
-                <div className="flex items-start justify-between gap-4">
-                  <span className="font-mono text-[9px] tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded uppercase font-bold">
-                    {p.category}
-                  </span>
-                  
-                  {p.metric && (
-                    <span className="font-mono text-[10px] text-emerald-650 uppercase tracking-widest font-extrabold flex items-center gap-1.5">
-                      <TrendingUp className="w-3.5 h-3.5" />
-                      {p.metric}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="font-sans text-lg font-extrabold text-slate-900 tracking-tight mt-4 group-hover:text-indigo-650 transition-colors">
-                  {p.title}
-                </h3>
-                
-                <p className="text-slate-600 text-xs sm:text-xs leading-relaxed mt-2.5 max-w-sm line-clamp-3">
-                  {p.description}
-                </p>
-              </div>
-
-              <div>
-                {/* Technology list */}
-                <div className="flex flex-wrap gap-1 mb-5">
-                  {p.tech.slice(0, 4).map((t) => (
-                    <span 
-                      key={t}
-                      className="font-mono text-[9px] text-slate-650 border border-slate-200/80 px-2 py-0.5 rounded bg-slate-50/80 uppercase"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                  {p.tech.length > 4 && (
-                    <span className="font-mono text-[9px] text-indigo-600 px-1 py-0.5">
-                      +{p.tech.length - 4} tools
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between border-t border-slate-100 pt-3">
-                  <button
-                    onClick={() => setActiveCaseStudyId(PROJECTS.findIndex((proj) => proj.title === p.title))}
-                    className="font-sans text-xs font-semibold uppercase tracking-wider text-indigo-650 hover:text-indigo-805 inline-flex items-center gap-1 cursor-pointer"
-                  >
-                    Review Case Study
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
-
-                  <div className="flex items-center gap-3">
-                    <a
-                      href={p.gitHubLink || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-400 hover:text-indigo-600 p-1 rounded-lg transition-colors cursor-pointer"
-                      title="Inspect Source code on GitHub"
-                    >
-                      <Github className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))
-        )}
-      </div>
-
-      {/* Detailed case study slide-over popup modal */}
-      <AnimatePresence>
-        {activeProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-md select-none"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ ease: [0.16, 1, 0.3, 1], duration: 0.4 }}
-              className="relative w-full max-w-3xl bg-white border border-slate-200 rounded-2xl overflow-hidden max-h-[88vh] flex flex-col justify-between shadow-2xl"
-            >
-              <div className="absolute top-0 inset-x-10 h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
-
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-[9px] text-indigo-600 uppercase tracking-widest font-bold bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded leading-none">
-                    {activeProject.category}
-                  </span>
-                  {activeProject.metric && (
-                    <span className="font-mono text-[9px] text-emerald-650 uppercase tracking-widest font-bold bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded leading-none">
-                      {activeProject.metric}
-                    </span>
-                  )}
-                </div>
-                <button
-                  onClick={() => setActiveCaseStudyId(null)}
-                  className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 border border-transparent hover:border-slate-200 transition-colors cursor-pointer"
-                  title="Close presentation modeling"
-                >
-                  <X className="w-4 h-4" />
+        <section className="sticky top-0 z-20 -mx-5 border-y border-white/10 bg-[#07090d]/90 px-5 py-4 backdrop-blur-xl sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {categories.map((item) => (
+                <button key={item} onClick={() => setCategory(item)} className={`whitespace-nowrap rounded-full border px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-all ${category === item ? "border-indigo-400 bg-indigo-500/15 text-indigo-300" : "border-white/10 text-white/45 hover:border-white/20 hover:text-white/80"}`}>
+                  {item}
                 </button>
-              </div>
+              ))}
+            </div>
+            <div className="relative shrink-0 lg:w-72">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search projects..." className="w-full rounded-full border border-white/10 bg-white/[.03] py-2.5 pl-10 pr-4 text-sm outline-none placeholder:text-white/25 focus:border-indigo-400/60" />
+            </div>
+          </div>
+        </section>
 
-              <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-left text-sm text-slate-700">
-                <div className="space-y-1">
-                  <h3 className="font-sans text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                    {activeProject.title}
-                  </h3>
-                  <p className="text-slate-500 text-xs">
-                    Thorough case breakdown detailing problem matrices, pipeline solutions, and validated achievements metrics.
-                  </p>
+        <section className="grid gap-5 py-10 md:grid-cols-2">
+          {filtered.map((project, index) => (
+            <motion.article key={project.title} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * .04 }} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[.025] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-400/30 hover:bg-white/[.045]">
+              <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-indigo-500/10 blur-3xl transition-all group-hover:bg-indigo-500/20" />
+              <div className="relative">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[.18em] text-indigo-400">{project.category}</span>
+                  <Code2 className="h-4 w-4 text-white/20" />
                 </div>
-
-                <div className="w-full h-px bg-slate-100" />
-
-                {/* Problem Statement block */}
-                <div className="space-y-2">
-                  <span className="font-mono text-[9px] text-slate-500 font-bold uppercase tracking-wider block">
-                    THE ENGINEERING CHALLENGE (PROBLEM STATEMENT)
-                  </span>
-                  <p className="font-sans text-xs sm:text-xs text-slate-705 leading-relaxed bg-slate-50 border border-slate-205 p-4 rounded-xl">
-                    {activeProject.problem}
-                  </p>
+                <h2 className="mt-5 text-2xl font-semibold tracking-tight">{project.title}</h2>
+                <p className="mt-2 text-sm font-medium text-white/65">{project.tagline}</p>
+                <p className="mt-4 min-h-20 text-sm leading-6 text-white/45">{project.description}</p>
+                {project.metric && <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/5 px-3 py-1.5 font-mono text-[10px] text-emerald-300"><Gauge className="h-3.5 w-3.5" />{project.metric}</div>}
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {project.tech.map((tech) => <span key={tech} className="rounded-md border border-white/10 bg-white/[.025] px-2.5 py-1 font-mono text-[10px] text-white/45">{tech}</span>)}
                 </div>
-
-                {/* Solution Statement block */}
-                <div className="space-y-2">
-                  <span className="font-mono text-[9px] text-indigo-600 font-bold uppercase tracking-wider block">
-                    THE ARCHITECTURAL SHIFT (SOLUTION COGNIZANCE)
-                  </span>
-                  <p className="font-sans text-xs sm:text-xs text-slate-705 leading-relaxed bg-indigo-50/50 border border-indigo-100 p-4 rounded-xl">
-                    {activeProject.solution}
-                  </p>
-                </div>
-
-                {/* Step-by-step pathway flowchart */}
-                <div className="space-y-3">
-                  <span className="font-mono text-[9px] text-slate-500 font-bold uppercase tracking-wider block flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-indigo-600" />
-                    STEP-BY-STEP DATA RUNTIME PATHWAY
-                  </span>
-                  <div className="space-y-2 sm:space-y-1.5 font-mono text-[10px] sm:text-[11px] text-slate-500">
-                    {activeProject.architectureSteps.map((step, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start gap-3 p-3 bg-slate-50 border border-slate-150 rounded-lg hover:border-slate-250 transition-colors"
-                      >
-                        <span className="font-bold text-indigo-600 leading-none">
-                          0{idx + 1}.
-                        </span>
-                        <span>{step}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Measurable impacts bullet points list */}
-                <div className="space-y-3">
-                  <span className="font-mono text-[9px] text-indigo-600 font-bold uppercase tracking-wider block flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-                    MEASURABLE BUSINESS IMPACT METRICS
-                  </span>
-                  <div className="space-y-2">
-                    {activeProject.impactBullets.map((bullet, idx) => (
-                      <div key={idx} className="flex items-start gap-2.5">
-                        <CheckSquare className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-xs sm:text-xs text-slate-655 font-sans leading-relaxed">
-                          {bullet}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Framework listings */}
-                <div className="space-y-2.5">
-                  <span className="font-mono text-[9px] text-slate-500 font-bold uppercase tracking-widest block">
-                    TECHNOLOGY COMPLIANCE MATRICES
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {activeProject.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="font-mono text-[9.5px] text-slate-600 border border-slate-205 px-2.5 py-1 rounded-md bg-slate-50 font-medium"
-                      >
-                        {t}
-                      </span>
-                    ))}
+                <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-5">
+                  <button onClick={() => setActive(project)} className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white">View case study <ArrowUpRight className="h-4 w-4" /></button>
+                  <div className="flex gap-3">
+                    {project.github && <a href={project.github} target="_blank" rel="noreferrer" aria-label="GitHub" className="text-white/30 hover:text-white"><Github className="h-4 w-4" /></a>}
+                    {project.demo && <a href={project.demo} target="_blank" rel="noreferrer" className="font-mono text-[10px] uppercase text-indigo-400 hover:text-indigo-300">Live</a>}
                   </div>
                 </div>
               </div>
+            </motion.article>
+          ))}
+        </section>
 
-              <div className="p-5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                <span className="font-mono text-[9px] text-slate-400">
-                  Deployment pipeline: production cloud server EKS
-                </span>
+        {filtered.length === 0 && <div className="py-24 text-center font-mono text-xs text-white/35">No projects match your search.</div>}
 
-                <div className="flex items-center gap-3">
-                  <a
-                    href={activeProject.gitHubLink || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-4 py-2 rounded bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-sans text-xs font-semibold uppercase tracking-wider cursor-pointer"
-                  >
-                    <Github className="w-3.5 h-3.5" />
-                    Inspector Link
-                  </a>
-                  <button
-                    onClick={() => setActiveCaseStudyId(null)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-sans text-xs font-semibold uppercase tracking-wider cursor-pointer font-bold"
-                  >
-                    Confirm Review
-                  </button>
-                </div>
+        <footer className="border-t border-white/10 py-10 font-mono text-[10px] uppercase tracking-[.2em] text-white/25">Projects only · Naga Lokesh Sai Alla</footer>
+      </div>
+
+      <AnimatePresence>
+        {active && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md" onClick={() => setActive(null)}>
+            <motion.div initial={{ opacity: 0, y: 20, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: .98 }} onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/10 bg-[#0c1018] p-7 shadow-2xl sm:p-9">
+              <div className="flex items-start justify-between gap-5">
+                <div><p className="font-mono text-[10px] uppercase tracking-[.2em] text-indigo-400">{active.category}</p><h2 className="mt-3 text-3xl font-semibold tracking-tight">{active.title}</h2></div>
+                <button onClick={() => setActive(null)} className="rounded-full border border-white/10 p-2 text-white/40 hover:text-white"><X className="h-4 w-4" /></button>
               </div>
-
+              <p className="mt-5 text-sm leading-7 text-white/60">{active.description}</p>
+              {active.metric && <p className="mt-5 font-mono text-xs text-emerald-300">{active.metric}</p>}
+              <div className="mt-8 grid gap-8 sm:grid-cols-2">
+                <div><div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-white/35"><Layers3 className="h-4 w-4" /> Architecture</div><div className="mt-4 space-y-2">{active.architecture.map((step, i) => <div key={step} className="rounded-xl border border-white/10 bg-white/[.025] p-3 text-sm text-white/60"><span className="mr-3 font-mono text-indigo-400">0{i + 1}</span>{step}</div>)}</div></div>
+                <div><div className="font-mono text-[10px] uppercase tracking-widest text-white/35">Impact</div><div className="mt-4 space-y-3">{active.impact.map((item) => <div key={item} className="text-sm leading-6 text-white/60">• {item}</div>)}</div></div>
+              </div>
+              <div className="mt-8 flex flex-wrap gap-2">{active.tech.map((tech) => <span key={tech} className="rounded-md border border-white/10 px-2.5 py-1 font-mono text-[10px] text-white/45">{tech}</span>)}</div>
+              <div className="mt-8 flex gap-3">{active.github && <a href={active.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-black"><Github className="h-4 w-4" /> Source</a>}{active.demo && <a href={active.demo} target="_blank" rel="noreferrer" className="rounded-full border border-white/15 px-4 py-2 text-sm text-white/70">Live demo</a>}</div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-    </section>
+    </main>
   );
 }
