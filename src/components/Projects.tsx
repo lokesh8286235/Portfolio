@@ -113,7 +113,7 @@ export default function Projects() {
 
       <nav className="fixed top-0 z-40 w-full bg-gradient-to-b from-black/95 via-black/70 to-transparent px-5 py-5 sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-[1500px] items-center justify-between">
-          <div className="text-2xl font-black tracking-[-.08em] text-[#e50914]">LOKESH</div>
+          <div className="text-2xl font-black tracking-[-.08em] text-[#e50914]">NAGA LOKESH SAI</div>
           <div className="flex items-center gap-5 text-xs font-medium text-white/70">
             <span className="hidden sm:block text-white">Projects</span>
             <button onClick={() => setSearchOpen(v => !v)} aria-label="Search projects"><Search className="h-5 w-5" /></button>
@@ -184,7 +184,7 @@ export default function Projects() {
       </section>
 
       <footer className="border-t border-white/10 px-5 py-10 text-center font-mono text-[9px] uppercase tracking-[.25em] text-white/25">
-        LOKESH · ENGINEERING PROJECTS · AI · ML SYSTEMS · DISTRIBUTED SYSTEMS
+        NAGA LOKESH SAI · ENGINEERING PROJECTS · AI · ML SYSTEMS · DISTRIBUTED SYSTEMS
       </footer>
 
       <AnimatePresence>
