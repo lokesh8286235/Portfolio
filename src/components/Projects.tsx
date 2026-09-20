@@ -113,20 +113,20 @@ export default function Projects() {
 
       <nav className="fixed top-0 z-40 w-full bg-gradient-to-b from-black/95 via-black/70 to-transparent px-5 py-5 sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-[1500px] items-center justify-between">
-          <div className="text-2xl font-black tracking-[-.08em] text-[#e50914]">NAGA LOKESH SAI</div>
+          <div className="text-2xl font-black tracking-[-.06em] text-white">NAGA LOKESH SAI</div>
           <div className="flex items-center gap-5 text-xs font-medium text-white/70">
-            <span className="hidden sm:block text-white">Projects</span>
+            <span className="hidden sm:block text-white">PROJECTS</span>
             <button onClick={() => setSearchOpen(v => !v)} aria-label="Search projects"><Search className="h-5 w-5" /></button>
             <a href="https://github.com/lokesh8286235" target="_blank" rel="noreferrer" aria-label="GitHub"><Github className="h-5 w-5" /></a>
           </div>
         </div>
       </nav>
 
-      <section className="relative min-h-[82vh] overflow-hidden">
+      <section className="relative min-h-[76vh] overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_45%,rgba(99,102,241,.22),transparent_32%),linear-gradient(90deg,#080808_15%,rgba(8,8,8,.62)_52%,rgba(8,8,8,.15)),linear-gradient(0deg,#080808_2%,transparent_55%)]" />
         <div className="relative mx-auto flex min-h-[82vh] max-w-[1500px] items-end px-5 pb-20 sm:px-8 lg:px-12">
           <div className="max-w-3xl">
-            <p className="mb-4 font-mono text-[11px] font-semibold tracking-[.28em] text-white/55">FEATURED PROJECT · 01</p>
+            <p className="mb-4 font-mono text-[11px] font-semibold tracking-[.28em] text-red-400">NAGA LOKESH SAI · SOFTWARE ENGINEER</p>
             <h1 className="text-6xl font-black tracking-[-.055em] sm:text-8xl lg:text-[9rem]">{featured.title}</h1>
             <p className="mt-3 text-xs font-bold tracking-[.25em] text-white/70">{featured.eyebrow}</p>
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/65 sm:text-lg">{featured.description}</p>
