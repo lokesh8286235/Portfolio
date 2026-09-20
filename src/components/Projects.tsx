@@ -149,17 +149,16 @@ export default function Projects() {
         )}
 
         {filteredRows.map(row => (
-          <div key={row.title} className="mb-12">
-            <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-xl font-bold sm:text-2xl">{row.title}</h2>
-              <ChevronRight className="h-5 w-5 text-white/50" />
+          <motion.div key={row.title} className="mb-14" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.5 }}>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2"><h2 className="text-xl font-bold sm:text-2xl">{row.title}</h2><ChevronRight className="h-5 w-5 text-white/50" /></div><span className="hidden font-mono text-[9px] uppercase tracking-[.18em] text-white/25 sm:block">Scroll to explore</span>
             </div>
             <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-5 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {row.items.map((project, index) => (
                 <motion.button
                   key={project.title}
                   onClick={() => setActive(project)}
-                  whileHover={{ scale: 1.045, y: -6 }}
+                  whileHover={{ scale: 1.08, y: -8, zIndex: 10 }}
                   transition={{ duration: .18 }}
                   className="group relative min-w-[280px] max-w-[390px] flex-1 snap-start overflow-hidden rounded-md bg-[#181818] text-left shadow-2xl sm:min-w-[330px]"
                 >
@@ -179,7 +178,7 @@ export default function Projects() {
                 </motion.button>
               ))}
             </div>
-          </div>
+          </motion.div>
         ))}
       </section>
 
