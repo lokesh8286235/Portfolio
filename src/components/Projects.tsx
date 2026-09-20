@@ -17,17 +17,6 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
-    title: "Enterprise RAG Automation Platform",
-    category: "AI / RAG",
-    tagline: "Production retrieval, grounded generation, evaluation, and observability.",
-    description: "Built an end-to-end knowledge retrieval platform that ingests large document collections, creates vector representations, retrieves relevant context, and generates grounded answers through an LLM workflow.",
-    metric: "10K+ docs · 1,000+ queries/day · 91% accuracy",
-    tech: ["Python", "LangChain", "Claude API", "PostgreSQL", "pgvector", "AWS", "Kubernetes"],
-    architecture: ["Document ingestion", "Chunking + embeddings", "pgvector retrieval", "Top-k context selection", "Claude generation", "Prometheus monitoring"],
-    impact: ["Improved answer accuracy from 78% to 91%.", "Reduced manual lookup time by 40%.", "Maintained 99.9% uptime in production."],
-    github: "https://github.com/lokesh8286235/enterprise-rag-automation-platform"
-  },
-  {
     title: "AETHER — Incident Intelligence Platform",
     category: "AI / Engineering Intelligence",
     tagline: "Evidence-driven incident investigation and AI-assisted root-cause analysis.",
@@ -37,6 +26,17 @@ const PROJECTS: Project[] = [
     architecture: ["Incident intake", "Signal normalization", "Evidence retrieval", "Reasoning workflow", "Structured RCA output", "Evaluation loop"],
     impact: ["Evaluated across 840 real production cases.", "Focused outputs on evidence and reproducible investigation steps.", "Included false-positive and recall tracking for model evaluation."],
     github: "https://github.com/lokesh8286235/incident-intelligence-platform"
+  },
+  {
+    title: "Enterprise RAG Automation Platform",
+    category: "AI / RAG",
+    tagline: "Production retrieval, grounded generation, evaluation, and observability.",
+    description: "Built an end-to-end knowledge retrieval platform that ingests large document collections, creates vector representations, retrieves relevant context, and generates grounded answers through an LLM workflow.",
+    metric: "10K+ docs · 1,000+ queries/day · 91% accuracy",
+    tech: ["Python", "LangChain", "Claude API", "PostgreSQL", "pgvector", "AWS", "Kubernetes"],
+    architecture: ["Document ingestion", "Chunking + embeddings", "pgvector retrieval", "Top-k context selection", "Claude generation", "Prometheus monitoring"],
+    impact: ["Improved answer accuracy from 78% to 91%.", "Reduced manual lookup time by 40%.", "Maintained 99.9% uptime in production."],
+    github: "https://github.com/lokesh8286235/enterprise-rag-automation-platform"
   },
   {
     title: "Graph Compilation & Inference Optimization",
