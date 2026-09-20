@@ -86,6 +86,7 @@ const PROJECTS: Project[] = [
 ];
 
 const rows = [
+  { title: "All Projects", items: PROJECTS },
   { title: "AI & Intelligence", items: PROJECTS.filter(p => p.category === "AI & Intelligence") },
   { title: "ML Infrastructure", items: PROJECTS.filter(p => p.category === "ML Infrastructure") },
   { title: "Products & Full-Stack", items: PROJECTS.filter(p => p.category === "Products & Full-Stack") },
