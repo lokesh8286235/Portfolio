@@ -133,14 +133,14 @@ function ProjectRow({ title, items, onOpen }: { title: string; items: Project[];
         </div>
       </div>
 
-      <div ref={scroller} className="flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-visible py-3 pb-6 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div ref={scroller} onWheel={(e) => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.preventDefault(); e.currentTarget.scrollLeft += e.deltaY; } }} className="flex snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-visible py-4 pb-7 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {items.map((project, index) => (
           <motion.button
             key={project.title}
             onClick={() => onOpen(project)}
             whileHover={{ scale: 1.09, y: -10 }}
             transition={{ duration: .18 }}
-            className="group/card relative min-w-[190px] snap-start overflow-visible rounded-md text-left sm:min-w-[220px] lg:min-w-[245px]"
+            className="group/card relative min-w-[220px] snap-start overflow-visible rounded-md text-left sm:min-w-[250px] lg:min-w-[270px]"
           >
             <div
               className="relative aspect-[2/3] overflow-hidden rounded-md border border-white/10 shadow-2xl transition-shadow duration-300 group-hover/card:border-white/30 group-hover/card:shadow-[0_20px_60px_rgba(0,0,0,.7)]"
