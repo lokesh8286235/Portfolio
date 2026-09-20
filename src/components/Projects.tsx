@@ -25,7 +25,7 @@ const PROJECTS: Project[] = [
     tech: ["Python", "LLMs", "RAG", "Evaluation", "Observability", "FastAPI"],
     architecture: ["Incident intake", "Signal normalization", "Evidence retrieval", "Reasoning workflow", "Structured RCA output", "Evaluation loop"],
     impact: ["Evaluated across 840 real production cases.", "Focused outputs on evidence and reproducible investigation steps.", "Included false-positive and recall tracking for model evaluation."],
-    github: "https://github.com/lokesh8286235/incident-intelligence-platform"
+    github: "https://github.com/lokesh8286235/enterprise-rag-automation-platform"
   },
   {
     title: "Enterprise RAG Automation Platform",
