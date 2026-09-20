@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowRight, Github, Play, Search, X, ExternalLink, ChevronRight } from "lucide-react";
 
@@ -176,6 +176,16 @@ export default function Projects() {
   const [active, setActive] = useState<Project | null>(null);
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const [heroPaused, setHeroPaused] = useState(false);
+
+  useEffect(() => {
+    if (heroPaused) return;
+    const timer = window.setInterval(() => {
+      setFeaturedIndex((index) => (index + 1) % PROJECTS.length);
+    }, 6500);
+    return () => window.clearInterval(timer);
+  }, [heroPaused]);
 
   const filteredRows = useMemo(() => rows.map(row => ({
     ...row,
@@ -185,7 +195,7 @@ export default function Projects() {
     })
   })).filter(row => row.items.length), [query]);
 
-  const featured = PROJECTS[0];
+  const featured = PROJECTS[featuredIndex];
 
   return (
     <main className="min-h-screen bg-[#080808] text-white selection:bg-red-600/40">
@@ -202,20 +212,65 @@ export default function Projects() {
         </div>
       </nav>
 
-      <section className="relative min-h-[76vh] overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_45%,rgba(99,102,241,.22),transparent_32%),linear-gradient(90deg,#080808_15%,rgba(8,8,8,.62)_52%,rgba(8,8,8,.15)),linear-gradient(0deg,#080808_2%,transparent_55%)]" />
-        <div className="relative mx-auto flex min-h-[82vh] max-w-[1500px] items-end px-5 pb-20 sm:px-8 lg:px-12">
-          <div className="max-w-3xl">
-            <p className="mb-4 font-mono text-[11px] font-semibold tracking-[.28em] text-red-400">NAGA LOKESH SAI · SOFTWARE ENGINEER</p>
-            <h1 className="text-6xl font-black tracking-[-.055em] sm:text-8xl lg:text-[9rem]">{featured.title}</h1>
-            <p className="mt-3 text-xs font-bold tracking-[.25em] text-white/70">{featured.eyebrow}</p>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-white/65 sm:text-lg">{featured.description}</p>
-            <p className="mt-5 font-mono text-xs text-white/85">{featured.metric}</p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <button onClick={() => setActive(featured)} className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-bold text-black hover:bg-white/85"><Play className="h-4 w-4 fill-current" /> Explore Project</button>
-              <a href={featured.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-white/15 px-6 py-3 text-sm font-bold backdrop-blur hover:bg-white/25"><Github className="h-4 w-4" /> Source Code</a>
-            </div>
+      <section
+        className="relative min-h-[82vh] overflow-hidden"
+        onMouseEnter={() => setHeroPaused(true)}
+        onMouseLeave={() => setHeroPaused(false)}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={featured.title}
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: .99 }}
+            transition={{ duration: .7, ease: "easeOut" }}
+            className="absolute inset-0"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_40%,rgba(99,102,241,.34),transparent_30%),linear-gradient(90deg,#080808_12%,rgba(8,8,8,.7)_48%,rgba(8,8,8,.18)),linear-gradient(0deg,#080808_4%,transparent_62%)]" />
+            <div className="absolute inset-0 opacity-60" style={{ background: "radial-gradient(circle at 78% 45%, rgba(35,80,180,.35), transparent 28%), radial-gradient(circle at 65% 65%, rgba(150,30,100,.22), transparent 30%)" }} />
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="relative mx-auto flex min-h-[82vh] max-w-[1500px] items-end px-5 pb-24 sm:px-8 lg:px-12">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={featured.title + "-copy"}
+              initial={{ opacity: 0, x: 35 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -25 }}
+              transition={{ duration: .5 }}
+              className="max-w-3xl"
+            >
+              <p className="mb-4 font-mono text-[11px] font-semibold tracking-[.28em] text-red-400">NAGA LOKESH SAI · SOFTWARE ENGINEER</p>
+              <p className="mb-2 font-mono text-[10px] tracking-[.2em] text-white/45">FEATURED PROJECT · {String(featuredIndex + 1).padStart(2, "0")} / {String(PROJECTS.length).padStart(2, "0")}</p>
+              <h1 className="text-6xl font-black tracking-[-.055em] sm:text-8xl lg:text-[9rem]">{featured.title}</h1>
+              <p className="mt-3 text-xs font-bold tracking-[.25em] text-white/70">{featured.eyebrow}</p>
+              <p className="mt-6 max-w-2xl text-base leading-7 text-white/65 sm:text-lg">{featured.description}</p>
+              <p className="mt-5 font-mono text-xs text-white/85">{featured.metric}</p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <button onClick={() => setActive(featured)} className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-bold text-black hover:bg-white/85"><Play className="h-4 w-4 fill-current" /> Explore Project</button>
+                {featured.github && <a href={featured.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-white/15 px-6 py-3 text-sm font-bold backdrop-blur hover:bg-white/25"><Github className="h-4 w-4" /> Source Code</a>}
+                {featured.demo && <a href={featured.demo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-red-600 px-6 py-3 text-sm font-bold hover:bg-red-500"><ExternalLink className="h-4 w-4" /> Live Demo</a>}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="absolute bottom-8 left-5 right-5 flex items-center gap-3 sm:left-8 sm:right-8 lg:left-12 lg:right-12">
+          <button onClick={() => setFeaturedIndex((featuredIndex - 1 + PROJECTS.length) % PROJECTS.length)} className="hidden h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 backdrop-blur hover:bg-white/20 md:flex" aria-label="Previous project">
+            <ChevronRight className="h-4 w-4 rotate-180" />
+          </button>
+          <div className="flex max-w-2xl flex-1 gap-1.5">
+            {PROJECTS.map((project, index) => (
+              <button key={project.title} onClick={() => setFeaturedIndex(index)} className="group h-1 flex-1 overflow-hidden rounded-full bg-white/20" aria-label={`Show ${project.title}`}>
+                <span className={`block h-full rounded-full transition-all ${index === featuredIndex ? "w-full bg-red-600 duration-[6500ms]" : index < featuredIndex ? "w-full bg-white/45" : "w-0"}`} />
+              </button>
+            ))}
           </div>
+          <button onClick={() => setFeaturedIndex((featuredIndex + 1) % PROJECTS.length)} className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 backdrop-blur hover:bg-white/20" aria-label="Next project">
+            <ChevronRight className="h-4 w-4" />
+          </button>
+          <span className="hidden font-mono text-[9px] uppercase tracking-[.16em] text-white/35 sm:block">{heroPaused ? "Paused" : "Auto-playing"}</span>
         </div>
       </section>
 
